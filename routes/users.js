@@ -29,4 +29,20 @@ router.put("/:id", async(req, res)=> {
     }
 });
 
+// Delete the user
+router.delete("/:id", async(req, res)=> {
+    // Check if input user id matches with db userId and it is Admin
+    if(req.body.userId === req.params.id || req.body.isAdmin) {
+        // Delete the user by finding the user by its Id
+        try {
+            await User.findByIdAndDelete(req.params.id);
+            res.status(200).json("Account has been deleted");
+        } catch (error) {
+            return res.status(500).json(error);
+        }
+    } else {
+        return res.status(403).json("You can delete only your account!");
+    }
+});
+
 module.exports = router;
