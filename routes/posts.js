@@ -35,7 +35,9 @@ router.put("/:id", async (req, res) => {
 // Delete a post
 router.delete("/:id", async(req, res) => {
     try {
+        // Find the post
         const post = await Post.findById(req.params.id);
+        // Verify if post is trying to delete by its own user
         if(post.userId === req.body.userId) {
             await post.deleteOne();
             res.status(200).json("The post has been deleted");
@@ -45,6 +47,25 @@ router.delete("/:id", async(req, res) => {
     } catch (error) {
         res.status(500).json(error);
     }
+});
+
+// Like and dislike a post
+router.put("/:id/like", async(req, res) => {
+   try {
+       // Find the post
+       const post = await Post.findById(req.params.id);
+        // if post is not liked, then liked
+        // else dislike the same post
+       if(!post.likes.includes(req.body.userId)) {
+           await post.updateOne({ $push: { likes: req.body.userId }});
+           res.status(200).json("The post has been liked");
+       } else {
+           await post.updateOne({ $pull: { likes: req.body.userId}});
+           res.status(200).json("The post has been disliked");
+       }
+   } catch (error) {
+       res.status(500).json(error);
+   } 
 });
 
 module.exports = router;
