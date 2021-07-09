@@ -79,4 +79,24 @@ router.get("/:id", async (req, res) => {
     }
 });
 
+// get timeline posts
+router.get("/timeline/all", async (req, res) => {
+    try {
+        //  Find the current user
+        const currentUser = await User.findById(req.body.userId);
+        // Find the current user posts
+        const userPosts = await Post.find({ userId: currentUser._id });
+        // Find the currnt users followings posts
+        const friendPosts = await Promise.all(
+            currentUser.followings.map((friendId) => {
+                return Post.find({ userId: friendId });
+            })
+        );
+        // Concate the current user and its following posts
+        res.json(userPosts.concat(...friendPosts));
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
 module.exports = router;
