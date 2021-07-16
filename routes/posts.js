@@ -93,7 +93,7 @@ router.get("/timeline/all", async (req, res) => {
             })
         );
         // Concate the current user and its following posts
-        res.json(userPosts.concat(...friendPosts));
+        res.status(200).json(userPosts.concat(...friendPosts));
     } catch (error) {
         res.status(500).json(error);
     }
