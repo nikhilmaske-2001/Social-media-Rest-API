@@ -54,7 +54,7 @@ router.get("/", async(req, res) => {
     const username = req.query.username;
     try {
         // Find the user by its userId if available else use username
-        const user = userId ? await User.findById(req.params.id) : await User.findOne({username: username});
+        const user = userId ? await User.findById(userId) : await User.findOne({username: username});
         // Do not show the password and updatedAt as it is confidential
         const {password, updatedAt, ...other} = user._doc;
         res.status(200).json(other);
