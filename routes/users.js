@@ -46,10 +46,15 @@ router.delete("/:id", async(req, res)=> {
 });
 
 // get a user
-router.get("/:id", async(req, res) => {
+router.get("/", async(req, res) => {
+    // Here we are using a query 
+    // something like this: /username if username is available
+    // else /userId
+    const userId = req.query.userId;
+    const username = req.query.username;
     try {
-        // Find the user by its userId
-        const user = await User.findById(req.params.id);
+        // Find the user by its userId if available else use username
+        const user = userId ? await User.findById(userId) : await User.findOne({username: username});
         // Do not show the password and updatedAt as it is confidential
         const {password, updatedAt, ...other} = user._doc;
         res.status(200).json(other);
